@@ -1,0 +1,794 @@
+{
+  "project": "VietEvidence Pilot",
+  "version": "0.1",
+  "created": "2026-10-21",
+  "seed": 20261021,
+  "status": "Pilot dataset and scoring software; no LLM comparison has been run.",
+  "source": {
+    "url": "https://github.com/google-deepmind/xquad",
+    "commit": "7d30520c717524000f0d9d2f9c10a069acd9d285",
+    "sha256": "f619a1eb11fb42d3ab0834259e488a65f585447ef6154437bfb7199d85161a04",
+    "license": "CC BY-SA 4.0"
+  },
+  "prompts": [
+    {
+      "id": "direct",
+      "label": "Hỏi trực tiếp",
+      "instruction": "Trả lời câu hỏi chỉ dựa vào đoạn văn được cung cấp. Không dùng kiến thức bên ngoài."
+    },
+    {
+      "id": "evidence",
+      "label": "Yêu cầu bằng chứng",
+      "instruction": "Chỉ trả lời nếu đoạn văn có bằng chứng đủ để trả lời toàn bộ câu hỏi. Trích nguyên văn phần bằng chứng đó; nếu không đủ thông tin, hãy chọn abstain. Không dùng kiến thức bên ngoài."
+    },
+    {
+      "id": "verify",
+      "label": "Kiểm tra trước khi trả lời",
+      "instruction": "Trước khi trả lời, xác định một trích đoạn liên quan và kiểm tra xem trích đoạn có thực sự đủ để trả lời toàn bộ câu hỏi hay chỉ nhắc đến chủ đề tương tự. Nếu không đủ bằng chứng, chọn abstain. Chỉ xuất kết quả cuối và trích đoạn, không xuất suy luận nội bộ. Không dùng kiến thức bên ngoài."
+    }
+  ],
+  "response_schema": "Chỉ trả về một đối tượng JSON: {\"status\":\"answer hoặc abstain\",\"answer\":\"đáp án ngắn, hoặc chuỗi rỗng khi abstain\",\"evidence\":\"trích nguyên văn từ đoạn văn, hoặc chuỗi rỗng khi abstain\"}. Không thêm nội dung ngoài JSON.",
+  "cases": [
+    {
+      "case_id": "VE01-A",
+      "pair_id": "VE01",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Martin_Luther",
+      "source_question_id": "56f8094aa6d7ea1400e17391",
+      "question": "Các tác phẩm của Luther lan sang Pháp, Anh và Ý khi nào?",
+      "context": "Các tác phẩm của Luther lưu hành rộng rãi, đến Pháp, Anh và Ý sớm nhất là năm 1519. Các sinh viên đã tụ tập đến Wittenberg để nghe Luther diễn thuyết. Ông đã xuất bản một bài bình luận ngắn về Galati và Công trình của ông về Thi Thiên. Giai đoạn đầu này trong sự nghiệp của Luther là một trong những giai đoạn sáng tạo và hiệu quả nhất của ông. Ba trong số những công trình nổi tiếng nhất của ông đã được xuất bản vào năm 1520: To the Christian Nobility of the German, On the Babylon Captivity of the Church, và On the Freedom of a Christian.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "1519"
+      ],
+      "source_answers": [
+        "1519"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE01-B",
+      "pair_id": "VE01",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Martin_Luther",
+      "source_question_id": "56f8094aa6d7ea1400e17391",
+      "question": "Các tác phẩm của Luther lan sang Pháp, Anh và Ý khi nào?",
+      "context": "Các sinh viên đã tụ tập đến Wittenberg để nghe Luther diễn thuyết. Ông đã xuất bản một bài bình luận ngắn về Galati và Công trình của ông về Thi Thiên. Giai đoạn đầu này trong sự nghiệp của Luther là một trong những giai đoạn sáng tạo và hiệu quả nhất của ông. Ba trong số những công trình nổi tiếng nhất của ông đã được xuất bản vào năm 1520: To the Christian Nobility of the German, On the Babylon Captivity of the Church, và On the Freedom of a Christian.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "1519"
+      ],
+      "removed_sentences": [
+        "Các tác phẩm của Luther lưu hành rộng rãi, đến Pháp, Anh và Ý sớm nhất là năm 1519."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE02-A",
+      "pair_id": "VE02",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Amazon_rainforest",
+      "source_question_id": "5728349dff5b5019007d9efe",
+      "question": "Tên gọi bằng tiếng Hà Lan của rừng nhiệt đới Amazon là gì?",
+      "context": "Rừng nhiệt đới Amazon (tiếng Bồ Đào Nha: Floresta Amazônica hoặc Amazônia; tiếng Tây Ban Nha: Selva Amazónica, Amazonía hay thường được gọi là Amazonia; tiếng Pháp: Forêt amazonienne; tiếng Hà Lan: Amazoneregenwoud), còn được mọi người biết đến với tên gọi Amazonia hay Rừng rậm Amazon, là một khu rừng có tán lá rộng và ẩm ướt bao phủ hầu hết lưu vực sông Amazon ở Nam Mỹ. Lưu vực này bao phủ 7.000.000 km vuông (2.700.000 dặm vuông), trong đó có 5.500.000 km vuông (2.100.000 dặm vuông) được rừng nhiệt đới bao phủ. Khu vực này bao gồm lãnh thổ thuộc   chín quốc gia. Phần lớn rừng nằm trong Brazil, với 60% rừng nhiệt đới, tiếp theo là Peru với 13%, Colombia với 10% và với số lượng nhỏ ở Venezuela, Ecuador, Bolivia, Guyana, Suriname và Guiana thuộc Pháp. Các tiểu bang hoặc bộ phận trong bốn quốc gia có tên chứa chữ \"Amazonas\". Amazon đại diện cho hơn một nửa rừng nhiệt đới còn lại của hành tinh, và có khu rừng nhiệt đới đa dạng sinh học lớn nhất và đa dạng nhất thế giới, với ước tính khoảng 390 tỷ cây được chia thành 16.000 loài.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "Amazoneregenwoud"
+      ],
+      "source_answers": [
+        "Amazoneregenwoud"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE02-B",
+      "pair_id": "VE02",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Amazon_rainforest",
+      "source_question_id": "5728349dff5b5019007d9efe",
+      "question": "Tên gọi bằng tiếng Hà Lan của rừng nhiệt đới Amazon là gì?",
+      "context": "Lưu vực này bao phủ 7.000.000 km vuông (2.700.000 dặm vuông), trong đó có 5.500.000 km vuông (2.100.000 dặm vuông) được rừng nhiệt đới bao phủ. Khu vực này bao gồm lãnh thổ thuộc   chín quốc gia. Phần lớn rừng nằm trong Brazil, với 60% rừng nhiệt đới, tiếp theo là Peru với 13%, Colombia với 10% và với số lượng nhỏ ở Venezuela, Ecuador, Bolivia, Guyana, Suriname và Guiana thuộc Pháp. Các tiểu bang hoặc bộ phận trong bốn quốc gia có tên chứa chữ \"Amazonas\". Amazon đại diện cho hơn một nửa rừng nhiệt đới còn lại của hành tinh, và có khu rừng nhiệt đới đa dạng sinh học lớn nhất và đa dạng nhất thế giới, với ước tính khoảng 390 tỷ cây được chia thành 16.000 loài.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "Amazoneregenwoud"
+      ],
+      "removed_sentences": [
+        "Rừng nhiệt đới Amazon (tiếng Bồ Đào Nha: Floresta Amazônica hoặc Amazônia; tiếng Tây Ban Nha: Selva Amazónica, Amazonía hay thường được gọi là Amazonia; tiếng Pháp: Forêt amazonienne; tiếng Hà Lan: Amazoneregenwoud), còn được mọi người biết đến với tên gọi Amazonia hay Rừng rậm Amazon, là một khu rừng có tán lá rộng và ẩm ướt bao phủ hầu hết lưu vực sông Amazon ở Nam Mỹ."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE03-A",
+      "pair_id": "VE03",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Southern_California",
+      "source_question_id": "5705f7c875f01819005e77dc",
+      "question": "Siêu đô thị Nam California đứng thứ mấy về dân số so với toàn quốc?",
+      "context": "Nam California có một môi trường đô thị phát triển mạnh mẽ, nơi có một số đô thị lớn nhất trong tiểu bang, cùng với khu vực rộng lớn chưa phát triển. Đó là siêu đô thị (megalopolis) đông dân thứ ba ở Hoa Kỳ, sau Siêu đô thị Ngũ Đại Hồ và siêu đô thị Đông Bắc. Phần lớn miền nam California nổi tiếng với các cộng đồng ở ngoại ô, rộng lớn và trải dài, và sử dụng ô tô và đường cao tốc. Các khu vực chủ đạo là Los Angeles, Quận Cam, San Diego và Riverside-San Bernardino, mỗi khu vực là trung tâm của vùng đô thị tương ứng, bao gồm nhiều thành phố và cộng đồng nhỏ hơn. Đô thị cũng có một khu vực vùng đô thị quốc tế dưới dạng San Diego–Tijuana, được tạo ra bởi đô thị kéo dài đến Baja California.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "thứ ba"
+      ],
+      "source_answers": [
+        "thứ ba"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE03-B",
+      "pair_id": "VE03",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Southern_California",
+      "source_question_id": "5705f7c875f01819005e77dc",
+      "question": "Siêu đô thị Nam California đứng thứ mấy về dân số so với toàn quốc?",
+      "context": "Nam California có một môi trường đô thị phát triển mạnh mẽ, nơi có một số đô thị lớn nhất trong tiểu bang, cùng với khu vực rộng lớn chưa phát triển. Phần lớn miền nam California nổi tiếng với các cộng đồng ở ngoại ô, rộng lớn và trải dài, và sử dụng ô tô và đường cao tốc. Các khu vực chủ đạo là Los Angeles, Quận Cam, San Diego và Riverside-San Bernardino, mỗi khu vực là trung tâm của vùng đô thị tương ứng, bao gồm nhiều thành phố và cộng đồng nhỏ hơn. Đô thị cũng có một khu vực vùng đô thị quốc tế dưới dạng San Diego–Tijuana, được tạo ra bởi đô thị kéo dài đến Baja California.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "thứ ba"
+      ],
+      "removed_sentences": [
+        "Đó là siêu đô thị (megalopolis) đông dân thứ ba ở Hoa Kỳ, sau Siêu đô thị Ngũ Đại Hồ và siêu đô thị Đông Bắc."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE04-A",
+      "pair_id": "VE04",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "European_Union_law",
+      "source_question_id": "5725cc38ec44d21400f3d5bb",
+      "question": "Hiệp ước chính hình thành Liên minh châu Âu bắt đầu như thế nào?",
+      "context": "Các Hiệp ước chính hình thành Liên minh châu Âu bắt đầu bằng quy định chung về than và thép, và sau đó là năng lượng nguyên tử, nhưng các thể chế chính thức và hoàn chỉnh hơn mới được thiết lập thông qua Hiệp ước Rome năm 1957 và Hiệp ước Maastricht năm 1992 (bây giờ là TFEU - Hiệp ước hoạt động của Liên minh Châu Âu). Hiệp ước có một vài sửa đổi nhỏ trong những năm 1960 và 1970. Các hiệp ước sửa đổi lớn đã được ký kết để phát triển hoàn toàn thành một thị trường nội bộ thống nhất trong Đạo luật châu Âu thống nhất năm 1986, để tiếp tục phát triển một châu Âu xã hội hơn trong Hiệp ước Amsterdam 1997, và sửa đổi nhỏ quyền lực tương đối của các quốc gia thành viên trong các tổ chức Liên minh châu Âu trong Hiệp ước Nice năm 2001 và Hiệp ước Lisbon năm 2007. Kể từ khi thành lập, nhiều quốc gia thành viên đã tham gia thông qua một loạt các hiệp ước gia nhập, từ Anh, Ireland, Đan Mạch và Na Uy vào năm 1972 (mặc dù Na Uy cuối cùng không tham gia), Hy Lạp vào năm 1979, Tây Ban Nha và Bồ Đào Nha vào năm 1985, Áo, Phần Lan, Na Uy và Thụy Điển vào năm 1994 (mặc dù Na Uy lần nữa không tham gia, vì thiếu sự ủng hộ trong cuộc trưng cầu dân ý), Cộng hòa Séc, Síp, Estonia, Hungary, Latvia, Litva, Malta, Ba Lan, Slovakia và Slovenia vào năm 2004, Romania và Bulgaria năm 2007 và Croatia năm 2013. Greenland đã ký Hiệp ước vào năm 1985 giúp quốc gia này được hưởng quy chế đặc biệt.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "bằng quy định chung về than và thép"
+      ],
+      "source_answers": [
+        "bằng quy định chung về than và thép"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE04-B",
+      "pair_id": "VE04",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "European_Union_law",
+      "source_question_id": "5725cc38ec44d21400f3d5bb",
+      "question": "Hiệp ước chính hình thành Liên minh châu Âu bắt đầu như thế nào?",
+      "context": "Hiệp ước có một vài sửa đổi nhỏ trong những năm 1960 và 1970. Các hiệp ước sửa đổi lớn đã được ký kết để phát triển hoàn toàn thành một thị trường nội bộ thống nhất trong Đạo luật châu Âu thống nhất năm 1986, để tiếp tục phát triển một châu Âu xã hội hơn trong Hiệp ước Amsterdam 1997, và sửa đổi nhỏ quyền lực tương đối của các quốc gia thành viên trong các tổ chức Liên minh châu Âu trong Hiệp ước Nice năm 2001 và Hiệp ước Lisbon năm 2007. Kể từ khi thành lập, nhiều quốc gia thành viên đã tham gia thông qua một loạt các hiệp ước gia nhập, từ Anh, Ireland, Đan Mạch và Na Uy vào năm 1972 (mặc dù Na Uy cuối cùng không tham gia), Hy Lạp vào năm 1979, Tây Ban Nha và Bồ Đào Nha vào năm 1985, Áo, Phần Lan, Na Uy và Thụy Điển vào năm 1994 (mặc dù Na Uy lần nữa không tham gia, vì thiếu sự ủng hộ trong cuộc trưng cầu dân ý), Cộng hòa Séc, Síp, Estonia, Hungary, Latvia, Litva, Malta, Ba Lan, Slovakia và Slovenia vào năm 2004, Romania và Bulgaria năm 2007 và Croatia năm 2013. Greenland đã ký Hiệp ước vào năm 1985 giúp quốc gia này được hưởng quy chế đặc biệt.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "bằng quy định chung về than và thép"
+      ],
+      "removed_sentences": [
+        "Các Hiệp ước chính hình thành Liên minh châu Âu bắt đầu bằng quy định chung về than và thép, và sau đó là năng lượng nguyên tử, nhưng các thể chế chính thức và hoàn chỉnh hơn mới được thiết lập thông qua Hiệp ước Rome năm 1957 và Hiệp ước Maastricht năm 1992 (bây giờ là TFEU - Hiệp ước hoạt động của Liên minh Châu Âu)."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE05-A",
+      "pair_id": "VE05",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Huguenot",
+      "source_question_id": "57107d73b654c5140001f91d",
+      "question": "Tuyên bố nào bãi bỏ Đạo Tin lành tại Pháp?",
+      "context": "﻿Chiến tranh tôn giáo nối lại vào những năm 1620 khiến các đặc quyền chính trị và quân sự của người Huguenot bị bãi bỏ sau khi họ thua trận. Họ duy trì các điều khoản tôn giáo của Sắc lệnh Nantes cho đến giai đoạn trị vì của Louis XIV, người tăng cường bức hại quyết liệt các điều khoản này cho đến khi ban hành Sắc lệnh Fontainebleau (1685), bãi bỏ mọi công nhận pháp lý đối với Đạo Tin lành tại Pháp và ép buộc người Huguenot phải cải đạo. Trong khi gần ba phần tư số người sau cùng bị giết hay quy phục, có khoảng 500.000 người Huguenot trốn chạy khỏi nước Pháp đến đầu thế kỷ 18[cần trích dẫn].",
+      "expected_status": "answer",
+      "reference_answers": [
+        "Sắc lệnh Fontainebleau"
+      ],
+      "source_answers": [
+        "Sắc lệnh Fontainebleau"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE05-B",
+      "pair_id": "VE05",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Huguenot",
+      "source_question_id": "57107d73b654c5140001f91d",
+      "question": "Tuyên bố nào bãi bỏ Đạo Tin lành tại Pháp?",
+      "context": "﻿Chiến tranh tôn giáo nối lại vào những năm 1620 khiến các đặc quyền chính trị và quân sự của người Huguenot bị bãi bỏ sau khi họ thua trận. Trong khi gần ba phần tư số người sau cùng bị giết hay quy phục, có khoảng 500.000 người Huguenot trốn chạy khỏi nước Pháp đến đầu thế kỷ 18[cần trích dẫn].",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "Sắc lệnh Fontainebleau"
+      ],
+      "removed_sentences": [
+        "Họ duy trì các điều khoản tôn giáo của Sắc lệnh Nantes cho đến giai đoạn trị vì của Louis XIV, người tăng cường bức hại quyết liệt các điều khoản này cho đến khi ban hành Sắc lệnh Fontainebleau (1685), bãi bỏ mọi công nhận pháp lý đối với Đạo Tin lành tại Pháp và ép buộc người Huguenot phải cải đạo."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE06-A",
+      "pair_id": "VE06",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Civil_disobedience",
+      "source_question_id": "5727213c708984140094da37",
+      "question": "Tác giả nổi tiếng nào đã sử dụng sự tương đồng và giống nhau của Percy Shelly trong bài viết của mình?",
+      "context": "Sau vụ thảm sát Peterloo năm 1819, nhà thơ Percy Shelley đã viết bài thơ chính trị “Cái mặt nạ của Tình trạng vô chính phủ” sau đó cùng năm, bắt đầu với những hình ảnh của những gì ông nghĩ là các hình thức bất công của chính quyền của thời mình và sau đó hình dung ra những khuấy động của một hình thức mới hoạt động xã hội. Nó có lẽ là tuyên bố hiện đại[mơ hồ] đầu tiên của nguyên tắc của sự phản đối bất bạo động. Một phiên bản được tiếp tục bởi nhà văn Henry David Thoreau trong bài luận của mình về Bất tuân Dân sự, và sau này của Gandhi trong học thuyết của ông về Satyagraha. Satyagraha của Gandhi đã bị ảnh hưởng một phần và lấy cảm hứng từ ý tưởng bất bạo động của Shelley trong phản đối và hành động chính trị. Đặc biệt, Gandhi sau này thường trích dẫn Masque of Anarchy của Shelley tới quần chúng rộng lớn trong các chiến dịch đấu tranh cho một Ấn Độ tự do.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "Henry David Thoreau"
+      ],
+      "source_answers": [
+        "Henry David Thoreau"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE06-B",
+      "pair_id": "VE06",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Civil_disobedience",
+      "source_question_id": "5727213c708984140094da37",
+      "question": "Tác giả nổi tiếng nào đã sử dụng sự tương đồng và giống nhau của Percy Shelly trong bài viết của mình?",
+      "context": "Sau vụ thảm sát Peterloo năm 1819, nhà thơ Percy Shelley đã viết bài thơ chính trị “Cái mặt nạ của Tình trạng vô chính phủ” sau đó cùng năm, bắt đầu với những hình ảnh của những gì ông nghĩ là các hình thức bất công của chính quyền của thời mình và sau đó hình dung ra những khuấy động của một hình thức mới hoạt động xã hội. Nó có lẽ là tuyên bố hiện đại[mơ hồ] đầu tiên của nguyên tắc của sự phản đối bất bạo động. Satyagraha của Gandhi đã bị ảnh hưởng một phần và lấy cảm hứng từ ý tưởng bất bạo động của Shelley trong phản đối và hành động chính trị. Đặc biệt, Gandhi sau này thường trích dẫn Masque of Anarchy của Shelley tới quần chúng rộng lớn trong các chiến dịch đấu tranh cho một Ấn Độ tự do.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "Henry David Thoreau"
+      ],
+      "removed_sentences": [
+        "Một phiên bản được tiếp tục bởi nhà văn Henry David Thoreau trong bài luận của mình về Bất tuân Dân sự, và sau này của Gandhi trong học thuyết của ông về Satyagraha."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE07-A",
+      "pair_id": "VE07",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Oxygen",
+      "source_question_id": "571c8539dd7acb1400e4c0e2",
+      "question": "Carl Wilhelm Scheele phát hiện ra oxi khi nào?",
+      "context": "Oxi được phát hiện độc lập bởi Carl Wilhelm Scheele, tại Uppsala, vào năm 1773 hay sớm hơn, và Joseph Priestley tại Wiltshire, vào năm 1774, nhưng Priestley thường được ưu tiên vì công trình của ông được xuất bản trước. Tên oxi được phát minh vào năm 1777 bởi Antoine Lavoisier, người có các thí nghiệm với oxi gây nghi vấn thuyết nhiệt tố về đốt lửa và ăn mòn nổi tiếng sau đó. Cái tên này bắt nguồn từ gốc Hy Lạp ὀξύς oxys, \"acid” (axit), \"sharp\" (sắc) theo nghĩa đen, đề cập đến vị chua của axít và -γενής -genes, \"chất sản xuất\", \"điều sinh ra\" theo nghĩa đen, vì tại thời điểm đặt tên, người ta quan niệm sai lầm rằng mọi axít đều cần có oxi trong thành phần cấu tạo của chúng. Các công dụng thông thường của oxi bao gồm ứng dụng trong chu trình sản xuất thép, nhựa và vải, hàn vảy, hàn và cắt thép và kim loại khác, chất đẩy tên lửa, trong liệu pháp oxi và hệ thống hỗ trợ sự sống trong máy bay, tàu ngầm, tàu vũ trụ và lặn.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "1773"
+      ],
+      "source_answers": [
+        "1773"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE07-B",
+      "pair_id": "VE07",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Oxygen",
+      "source_question_id": "571c8539dd7acb1400e4c0e2",
+      "question": "Carl Wilhelm Scheele phát hiện ra oxi khi nào?",
+      "context": "Tên oxi được phát minh vào năm 1777 bởi Antoine Lavoisier, người có các thí nghiệm với oxi gây nghi vấn thuyết nhiệt tố về đốt lửa và ăn mòn nổi tiếng sau đó. Cái tên này bắt nguồn từ gốc Hy Lạp ὀξύς oxys, \"acid” (axit), \"sharp\" (sắc) theo nghĩa đen, đề cập đến vị chua của axít và -γενής -genes, \"chất sản xuất\", \"điều sinh ra\" theo nghĩa đen, vì tại thời điểm đặt tên, người ta quan niệm sai lầm rằng mọi axít đều cần có oxi trong thành phần cấu tạo của chúng. Các công dụng thông thường của oxi bao gồm ứng dụng trong chu trình sản xuất thép, nhựa và vải, hàn vảy, hàn và cắt thép và kim loại khác, chất đẩy tên lửa, trong liệu pháp oxi và hệ thống hỗ trợ sự sống trong máy bay, tàu ngầm, tàu vũ trụ và lặn.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "1773"
+      ],
+      "removed_sentences": [
+        "Oxi được phát hiện độc lập bởi Carl Wilhelm Scheele, tại Uppsala, vào năm 1773 hay sớm hơn, và Joseph Priestley tại Wiltshire, vào năm 1774, nhưng Priestley thường được ưu tiên vì công trình của ông được xuất bản trước."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE08-A",
+      "pair_id": "VE08",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Construction",
+      "source_question_id": "57273a465951b619008f8700",
+      "question": "Điều gì thường tạo ra hàng loạt mặt hàng tương tự mà không có người mua được chỉ định?",
+      "context": "Xây dựng là một quy trình thiết kế và thi công nên các cơ sở hạ tầng hoặc công trình, nhà ở. Xây dựng khác với sản xuất ở chỗ sản xuất thường tạo ra hàng loạt mặt hàng tương tự mà không có người mua được chỉ định, còn xây dựng thường diễn ra tại địa điểm dành cho một khách hàng đã biết. Ngành xây dựng đóng góp từ 6-9% tổng sản phẩm nội địa. Hoạt động xây dựng bắt đầu bằng việc lên kế hoạch,[cần dẫn nguồn] thiết kế, lập dự toán và thi công tới khi dự án hoàn tất và sẵn sàng đưa vào sử dụng.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "sản xuất"
+      ],
+      "source_answers": [
+        "sản xuất"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE08-B",
+      "pair_id": "VE08",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Construction",
+      "source_question_id": "57273a465951b619008f8700",
+      "question": "Điều gì thường tạo ra hàng loạt mặt hàng tương tự mà không có người mua được chỉ định?",
+      "context": "Xây dựng là một quy trình thiết kế và thi công nên các cơ sở hạ tầng hoặc công trình, nhà ở. Ngành xây dựng đóng góp từ 6-9% tổng sản phẩm nội địa. Hoạt động xây dựng bắt đầu bằng việc lên kế hoạch,[cần dẫn nguồn] thiết kế, lập dự toán và thi công tới khi dự án hoàn tất và sẵn sàng đưa vào sử dụng.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "sản xuất"
+      ],
+      "removed_sentences": [
+        "Xây dựng khác với sản xuất ở chỗ sản xuất thường tạo ra hàng loạt mặt hàng tương tự mà không có người mua được chỉ định, còn xây dựng thường diễn ra tại địa điểm dành cho một khách hàng đã biết."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE09-A",
+      "pair_id": "VE09",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Newcastle_upon_Tyne",
+      "source_question_id": "5726660d5951b619008f71b1",
+      "question": "Khu định cư được ghi nhận đầu tiên trong tại Newcastle ngày nay là gì?",
+      "context": "Khu định cư đầu tiên được ghi nhận tại Newcastle ngày nay là Pons Aelius, một pháo đài La Mã và cây cầu bắc qua Sông Tyne. Khu này được đặt theo họ của Hoàng đế La Mã Hadrian, người đã thành lập vào thế kỷ thứ 2 sau Công Nguyên. Vinh dự hiếm có này cho thấy Hadrian có thể đã đến thăm địa điểm này và thiết lập cây cầu trong chuyến đi đến Anh. Dân số của Pons Aelius trong giai đoạn này được ước tính là 2.000 người. Những mảnh vỡ của Bức tường Hadrian vẫn có thể nhìn thấy ở các khu vực của Newcastle, đặc biệt dọc theo Đường West. \"Bức tường La Mã\" có thể được lần theo về phía đông đến pháo đài La Mã Segedunum ở Wallsend, nơi \"kết thúc của bức tường\", và đến pháo đài Arbeia ở South Shields. Chiều dài của Bức tường Hadrian là 73 dặm (117 km), trải dài suốt chiều rộng của nước Anh; Bức tường kết hợp Vallum, một rãnh lớn ở phía sau với các gò song song, và được xây dựng chủ yếu để phòng thủ, để ngăn chặn sự di cư không mong muốn và sự tấn công của các bộ lạc Pictish từ phía bắc, không phải là một tuyến chiến đấu cho một cuộc xâm lược lớn.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "Pons Aelius"
+      ],
+      "source_answers": [
+        "Pons Aelius"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE09-B",
+      "pair_id": "VE09",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Newcastle_upon_Tyne",
+      "source_question_id": "5726660d5951b619008f71b1",
+      "question": "Khu định cư được ghi nhận đầu tiên trong tại Newcastle ngày nay là gì?",
+      "context": "Khu này được đặt theo họ của Hoàng đế La Mã Hadrian, người đã thành lập vào thế kỷ thứ 2 sau Công Nguyên. Vinh dự hiếm có này cho thấy Hadrian có thể đã đến thăm địa điểm này và thiết lập cây cầu trong chuyến đi đến Anh. Những mảnh vỡ của Bức tường Hadrian vẫn có thể nhìn thấy ở các khu vực của Newcastle, đặc biệt dọc theo Đường West. \"Bức tường La Mã\" có thể được lần theo về phía đông đến pháo đài La Mã Segedunum ở Wallsend, nơi \"kết thúc của bức tường\", và đến pháo đài Arbeia ở South Shields. Chiều dài của Bức tường Hadrian là 73 dặm (117 km), trải dài suốt chiều rộng của nước Anh; Bức tường kết hợp Vallum, một rãnh lớn ở phía sau với các gò song song, và được xây dựng chủ yếu để phòng thủ, để ngăn chặn sự di cư không mong muốn và sự tấn công của các bộ lạc Pictish từ phía bắc, không phải là một tuyến chiến đấu cho một cuộc xâm lược lớn.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "Pons Aelius"
+      ],
+      "removed_sentences": [
+        "Khu định cư đầu tiên được ghi nhận tại Newcastle ngày nay là Pons Aelius, một pháo đài La Mã và cây cầu bắc qua Sông Tyne.",
+        "Dân số của Pons Aelius trong giai đoạn này được ước tính là 2.000 người."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE10-A",
+      "pair_id": "VE10",
+      "split": "development",
+      "condition": "complete",
+      "source_title": "Yuan_dynasty",
+      "source_question_id": "57286dfa2ca10214002da332",
+      "question": "Khi nào chính quyền của Hốt Tất Liệt hết tiền?",
+      "context": "Chính quyền của Hốt Tất Liệt phải đối mặt với những khó khăn tài chính sau năm 1279. Chiến tranh và các dự án xây dựng đã làm cạn kiệt ngân khố Mông Cổ. Những nỗ lực để tăng và thu các khoản thu thuế đã bị ảnh hưởng bởi tham nhũng và các vụ bê bối chính trị. Các vấn đề tài chính kéo theo các cuộc viễn chinh được quản lý kém. Cuộc xâm lược Nhật Bản lần thứ hai của Hốt Tất Liệt vào năm 1281 đã thất bại vì một cơn bão không may. Hốt Tất Liệt đã làm hỏng các chiến dịch tấn công An Nam, Champa và Java, nhưng đã giành được chiến thắng kiểu Pyrros trước Miến Điện. Các cuộc viễn chinh bị cản trở bởi bệnh tật, khí hậu khắc nghiệt và địa hình nhiệt đới không phù hợp với chiến tranh gắn kết của người Mông Cổ. Nhà Trần cai trị An Nam (Đại Việt) đã nghiền nát và đánh bại quân Mông Cổ trong Trận chiến Bạch Đằng (1288). Vùng Phúc Kiến của Trung Quốc là quê hương ban đầu của gia tộc Trần (Chen) Trung Quốc trước khi họ di cư dưới thời Trần Kinh (陳京, Chén Jīng) đến Đại Việt và có hậu duệ thành lập nhà Trần cai trị Đại Việt và một số thành viên nhất định của gia tộc vẫn có thể nói tiếng Trung Quốc như khi một phái viên nhà Nguyên có cuộc gặp với hoàng tử Trần nói tiếng Trung Quốc Trần Quốc Tuấn (sau này là vua Trần Hưng Đạo) vào năm 1282. Giáo sư Liam Kelley lưu ý rằng những người từ nhà Tống Trung Quốc như Zhao Zhong và Xu Zongdao chạy trốn đến nhà Trần cai trị Việt Nam sau cuộc xâm lược của người Mông Cổ đối với nhà Tống và họ đã giúp nhà Trần chiến đấu chống lại cuộc xâm lược của người Mông Cổ. Nhà Trần có nguồn gốc từ vùng Phúc Kiến của Trung Quốc cũng như giáo sĩ Đạo giáo Xu Zongdao, người đã ghi lại cuộc xâm lược của người Mông Cổ và gọi họ là \"kẻ cướp phương Bắc\". An Nam, Miến Điện và Champa công nhận quyền bá chủ của Mông Cổ và thiết lập quan hệ triều cống với nhà Nguyên.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "sau năm 1279"
+      ],
+      "source_answers": [
+        "sau năm 1279"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE10-B",
+      "pair_id": "VE10",
+      "split": "development",
+      "condition": "evidence_removed",
+      "source_title": "Yuan_dynasty",
+      "source_question_id": "57286dfa2ca10214002da332",
+      "question": "Khi nào chính quyền của Hốt Tất Liệt hết tiền?",
+      "context": "Chiến tranh và các dự án xây dựng đã làm cạn kiệt ngân khố Mông Cổ. Những nỗ lực để tăng và thu các khoản thu thuế đã bị ảnh hưởng bởi tham nhũng và các vụ bê bối chính trị. Các vấn đề tài chính kéo theo các cuộc viễn chinh được quản lý kém. Cuộc xâm lược Nhật Bản lần thứ hai của Hốt Tất Liệt vào năm 1281 đã thất bại vì một cơn bão không may. Hốt Tất Liệt đã làm hỏng các chiến dịch tấn công An Nam, Champa và Java, nhưng đã giành được chiến thắng kiểu Pyrros trước Miến Điện. Các cuộc viễn chinh bị cản trở bởi bệnh tật, khí hậu khắc nghiệt và địa hình nhiệt đới không phù hợp với chiến tranh gắn kết của người Mông Cổ. Nhà Trần cai trị An Nam (Đại Việt) đã nghiền nát và đánh bại quân Mông Cổ trong Trận chiến Bạch Đằng (1288). Vùng Phúc Kiến của Trung Quốc là quê hương ban đầu của gia tộc Trần (Chen) Trung Quốc trước khi họ di cư dưới thời Trần Kinh (陳京, Chén Jīng) đến Đại Việt và có hậu duệ thành lập nhà Trần cai trị Đại Việt và một số thành viên nhất định của gia tộc vẫn có thể nói tiếng Trung Quốc như khi một phái viên nhà Nguyên có cuộc gặp với hoàng tử Trần nói tiếng Trung Quốc Trần Quốc Tuấn (sau này là vua Trần Hưng Đạo) vào năm 1282. Giáo sư Liam Kelley lưu ý rằng những người từ nhà Tống Trung Quốc như Zhao Zhong và Xu Zongdao chạy trốn đến nhà Trần cai trị Việt Nam sau cuộc xâm lược của người Mông Cổ đối với nhà Tống và họ đã giúp nhà Trần chiến đấu chống lại cuộc xâm lược của người Mông Cổ. Nhà Trần có nguồn gốc từ vùng Phúc Kiến của Trung Quốc cũng như giáo sĩ Đạo giáo Xu Zongdao, người đã ghi lại cuộc xâm lược của người Mông Cổ và gọi họ là \"kẻ cướp phương Bắc\". An Nam, Miến Điện và Champa công nhận quyền bá chủ của Mông Cổ và thiết lập quan hệ triều cống với nhà Nguyên.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "sau năm 1279"
+      ],
+      "removed_sentences": [
+        "Chính quyền của Hốt Tất Liệt phải đối mặt với những khó khăn tài chính sau năm 1279."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE11-A",
+      "pair_id": "VE11",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "University_of_Chicago",
+      "source_question_id": "57284b904b864d19001648e3",
+      "question": "Tứ giác Chính có bao nhiêu tứ giác?",
+      "context": "Những tòa nhà đầu tiên của khuôn viên Đại học Chicago, nơi tạo nên cái ngày nay gọi là Tứ giác Chính, là một phần của \"kế hoạch tổng thể\" được hình thành bởi hai ủy viên của Đại học Chicago và được vẽ bởi kiến trúc sư người Chicago là Henry Ives Cobb. Tứ giác Chính bao gồm sáu tứ giác, mỗi tứ giác được bao quanh bởi các tòa nhà, giáp với một tứ giác lớn hơn. Các tòa nhà của Tứ giác Chính được thiết kế bởi Cobb, Shepley, Rutan và Coolidge, Holabird & Roche, và các công ty kiến trúc khác, pha trộn phong cách kiến trúc Gothic thời Victoria và Collegiate, theo khuôn mẫu của các trường Đại học Oxford. (Chẳng hạn như Tháp Mitchell được mô phỏng theo Tháp Magdalen của Oxford, và Nhà ăn tập thể trường đại học, Hội trường Hutchinson sao chép Hội trường Christ Church.)",
+      "expected_status": "answer",
+      "reference_answers": [
+        "sáu"
+      ],
+      "source_answers": [
+        "sáu"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE11-B",
+      "pair_id": "VE11",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "University_of_Chicago",
+      "source_question_id": "57284b904b864d19001648e3",
+      "question": "Tứ giác Chính có bao nhiêu tứ giác?",
+      "context": "Những tòa nhà đầu tiên của khuôn viên Đại học Chicago, nơi tạo nên cái ngày nay gọi là Tứ giác Chính, là một phần của \"kế hoạch tổng thể\" được hình thành bởi hai ủy viên của Đại học Chicago và được vẽ bởi kiến trúc sư người Chicago là Henry Ives Cobb. Các tòa nhà của Tứ giác Chính được thiết kế bởi Cobb, Shepley, Rutan và Coolidge, Holabird & Roche, và các công ty kiến trúc khác, pha trộn phong cách kiến trúc Gothic thời Victoria và Collegiate, theo khuôn mẫu của các trường Đại học Oxford. (Chẳng hạn như Tháp Mitchell được mô phỏng theo Tháp Magdalen của Oxford, và Nhà ăn tập thể trường đại học, Hội trường Hutchinson sao chép Hội trường Christ Church.)",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "sáu"
+      ],
+      "removed_sentences": [
+        "Tứ giác Chính bao gồm sáu tứ giác, mỗi tứ giác được bao quanh bởi các tòa nhà, giáp với một tứ giác lớn hơn."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE12-A",
+      "pair_id": "VE12",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Victoria_and_Albert_Museum",
+      "source_question_id": "572685cd5951b619008f7573",
+      "question": "V & A có nguồn gốc từ triển lãm thế giới nào?",
+      "context": "V&A có nguồn gốc từ Triển lãm Lớn năm 1851, trong đó Henry Cole, giám đốc đầu tiên của bảo tàng, đã tham gia vào việc lập kế hoạch; ban đầu bảo tàng được gọi là Bảo tàng Sản xuất, mở cửa lần đầu tiên vào tháng 5 năm 1852 tại Marlborough House, nhưng đến tháng 9 đã được chuyển đến Somerset House. Ở giai đoạn này, các bộ sưu tập bao gồm cả nghệ thuật và khoa học ứng dụng. Một số tác phẩm trưng bày từ Triển lãm đã được mua để tạo thành hạt nhân của bộ sưu tập. Đến tháng 2 năm 1854, các cuộc thảo luận đã được tiến hành để chuyển bảo tàng đến địa điểm hiện tại và nó được đổi tên thành Bảo tàng Nam Kensington. Năm 1855, kiến trúc sư người Đức Gottfried Semper, theo yêu cầu của Cole, đã tạo một thiết kế cho bảo tàng, nhưng đã bị Hội đồng Thương mại từ chối vì quá đắt. Vị trí sau đó được xây dựng Brompton Park House; bảo tàng đã được mở rộng bao gồm các phòng giải khát đầu tiên được mở vào năm 1857, bảo tàng là nơi đầu tiên trên thế giới cung cấp một cơ sở như vậy.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "Triển lãm Lớn năm 1851"
+      ],
+      "source_answers": [
+        "Triển lãm Lớn năm 1851"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE12-B",
+      "pair_id": "VE12",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Victoria_and_Albert_Museum",
+      "source_question_id": "572685cd5951b619008f7573",
+      "question": "V & A có nguồn gốc từ triển lãm thế giới nào?",
+      "context": "Ở giai đoạn này, các bộ sưu tập bao gồm cả nghệ thuật và khoa học ứng dụng. Một số tác phẩm trưng bày từ Triển lãm đã được mua để tạo thành hạt nhân của bộ sưu tập. Đến tháng 2 năm 1854, các cuộc thảo luận đã được tiến hành để chuyển bảo tàng đến địa điểm hiện tại và nó được đổi tên thành Bảo tàng Nam Kensington. Năm 1855, kiến trúc sư người Đức Gottfried Semper, theo yêu cầu của Cole, đã tạo một thiết kế cho bảo tàng, nhưng đã bị Hội đồng Thương mại từ chối vì quá đắt. Vị trí sau đó được xây dựng Brompton Park House; bảo tàng đã được mở rộng bao gồm các phòng giải khát đầu tiên được mở vào năm 1857, bảo tàng là nơi đầu tiên trên thế giới cung cấp một cơ sở như vậy.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "Triển lãm Lớn năm 1851"
+      ],
+      "removed_sentences": [
+        "V&A có nguồn gốc từ Triển lãm Lớn năm 1851, trong đó Henry Cole, giám đốc đầu tiên của bảo tàng, đã tham gia vào việc lập kế hoạch; ban đầu bảo tàng được gọi là Bảo tàng Sản xuất, mở cửa lần đầu tiên vào tháng 5 năm 1852 tại Marlborough House, nhưng đến tháng 9 đã được chuyển đến Somerset House."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE13-A",
+      "pair_id": "VE13",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Immune_system",
+      "source_question_id": "5728f2e26aef051400154899",
+      "question": "Bệnh mắc phải nào dẫn đến suy giảm miễn dịch ở người?",
+      "context": "Rối loạn hệ thống miễn dịch có thể dẫn đến các bệnh tự miễn dịch, bệnh viêm và ung thư. Suy giảm miễn dịch xảy ra khi hệ thống miễn dịch hoạt động kém hơn bình thường, dẫn đến nhiễm trùng tái phát và đe dọa tính mạng. Ở người, sự suy giảm miễn dịch có thể là kết quả của một bệnh di truyền như suy giảm miễn dịch kết hợp nghiêm trọng, các bệnh mắc phải như HIV/AIDS hoặc sử dụng thuốc ức chế miễn dịch. Ngược lại, tự miễn dịch là kết quả của một hệ thống miễn dịch quá hiếu động, tấn công các mô bình thường như thể các mô đó là sinh vật lạ. Các bệnh tự miễn thường gặp bao gồm viêm tuyến giáp Hashimoto, bệnh thấp khớp, đái tháo đường týp 1 và bệnh lupus ban đỏ hệ thống.Miễn dịch học bao gồm các nghiên cứu về tất cả các khía cạnh của hệ thống miễn dịch.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "HIV/AIDS"
+      ],
+      "source_answers": [
+        "HIV/AIDS"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE13-B",
+      "pair_id": "VE13",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Immune_system",
+      "source_question_id": "5728f2e26aef051400154899",
+      "question": "Bệnh mắc phải nào dẫn đến suy giảm miễn dịch ở người?",
+      "context": "Rối loạn hệ thống miễn dịch có thể dẫn đến các bệnh tự miễn dịch, bệnh viêm và ung thư. Suy giảm miễn dịch xảy ra khi hệ thống miễn dịch hoạt động kém hơn bình thường, dẫn đến nhiễm trùng tái phát và đe dọa tính mạng. Ngược lại, tự miễn dịch là kết quả của một hệ thống miễn dịch quá hiếu động, tấn công các mô bình thường như thể các mô đó là sinh vật lạ. Các bệnh tự miễn thường gặp bao gồm viêm tuyến giáp Hashimoto, bệnh thấp khớp, đái tháo đường týp 1 và bệnh lupus ban đỏ hệ thống.Miễn dịch học bao gồm các nghiên cứu về tất cả các khía cạnh của hệ thống miễn dịch.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "HIV/AIDS"
+      ],
+      "removed_sentences": [
+        "Ở người, sự suy giảm miễn dịch có thể là kết quả của một bệnh di truyền như suy giảm miễn dịch kết hợp nghiêm trọng, các bệnh mắc phải như HIV/AIDS hoặc sử dụng thuốc ức chế miễn dịch."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE14-A",
+      "pair_id": "VE14",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Packet_switching",
+      "source_question_id": "5726385e271a42140099d799",
+      "question": "Mỗi nhãn gói bao gồm cái gì ",
+      "context": "Ở chế độ phi kết nối, mỗi gói bao gồm toàn bộ thông tin địa chỉ. Các gói được định tuyến riêng lẻ, đôi khi dẫn đến các đường dẫn khác nhau và phân phối không theo thứ tự. Mỗi gói được dán nhãn địa chỉ nhận, địa chỉ nguồn, và số cổng. Nó cũng có thể được dán nhãn số thứ tự của gói. Điều này giúp loại trừ sự cần thiết của đường dẫn chuyên dụng để giúp gói tìm đường đến địa chỉ nhận, nhưng đồng nghĩa với việc cần nhiều thông tin hơn trong phần mào đầu của gói, do đó khiến nó lớn hơn và thông tin này cần được tra cứu trong bộ nhớ đánh dấu nội dung theo địa chỉ nhưng lại ngốn điện. Mỗi gói được gửi đi và có thể đi qua các tuyến khác nhau; có khả năng hệ thống phải thực hiện nhiều công việc cho từng gói vì hệ thống hướng kết nối phải thực hiện thiết lập kết nối, nhưng với ít thông tin hơn so với yêu cầu của ứng dụng. Tại địa chỉ nhận, tin nhắn/dữ liệu gốc được ghép lại theo đúng thứ tự, dựa trên số thứ tự gói. Do đó, một kết nối ảo, còn được gọi là mạch ảo hoặc luồng byte được cung cấp cho người dùng cuối bằng giao thức tầng giao vận, mặc dù các nút mạng trung gian chỉ cung cấp dịch vụ lớp mạng phi kết nối.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "địa chỉ nhận, địa chỉ nguồn, và số cổng"
+      ],
+      "source_answers": [
+        "địa chỉ nhận, địa chỉ nguồn, và số cổng"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE14-B",
+      "pair_id": "VE14",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Packet_switching",
+      "source_question_id": "5726385e271a42140099d799",
+      "question": "Mỗi nhãn gói bao gồm cái gì ",
+      "context": "Ở chế độ phi kết nối, mỗi gói bao gồm toàn bộ thông tin địa chỉ. Các gói được định tuyến riêng lẻ, đôi khi dẫn đến các đường dẫn khác nhau và phân phối không theo thứ tự. Nó cũng có thể được dán nhãn số thứ tự của gói. Điều này giúp loại trừ sự cần thiết của đường dẫn chuyên dụng để giúp gói tìm đường đến địa chỉ nhận, nhưng đồng nghĩa với việc cần nhiều thông tin hơn trong phần mào đầu của gói, do đó khiến nó lớn hơn và thông tin này cần được tra cứu trong bộ nhớ đánh dấu nội dung theo địa chỉ nhưng lại ngốn điện. Mỗi gói được gửi đi và có thể đi qua các tuyến khác nhau; có khả năng hệ thống phải thực hiện nhiều công việc cho từng gói vì hệ thống hướng kết nối phải thực hiện thiết lập kết nối, nhưng với ít thông tin hơn so với yêu cầu của ứng dụng. Tại địa chỉ nhận, tin nhắn/dữ liệu gốc được ghép lại theo đúng thứ tự, dựa trên số thứ tự gói. Do đó, một kết nối ảo, còn được gọi là mạch ảo hoặc luồng byte được cung cấp cho người dùng cuối bằng giao thức tầng giao vận, mặc dù các nút mạng trung gian chỉ cung cấp dịch vụ lớp mạng phi kết nối.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "địa chỉ nhận, địa chỉ nguồn, và số cổng"
+      ],
+      "removed_sentences": [
+        "Mỗi gói được dán nhãn địa chỉ nhận, địa chỉ nguồn, và số cổng."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE15-A",
+      "pair_id": "VE15",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Steam_engine",
+      "source_question_id": "571144d1a58dae1900cd6d6e",
+      "question": "Đâu là nguồn nhiệt thông thường để đun sôi nước trong động cơ hơi nước?",
+      "context": "Nhiệt cần thiết để đun sôi nước và cung cấp hơi nước có thể lấy từ nhiều nguồn khác nhau, phổ biến nhất là từ vật liệu đốt cháy được với nguồn cấp khí thích hợp trong không gian khép kín (gọi theo nhiều cách khác nhau làbuồng đốt, lò). Ở một số trường hợp, nguồn nhiệt là lò phản ứng hạt nhân, năng lượng địa nhiệt, năng lượng mặt trời hay nhiệt thải từ động cơ đốt trong hay quy trình công nghiệp. Trường hợp động cơ hơi nước mô hình hoặc đồ chơi, nguồn nhiệt có thể là bộ phận làm nóng bằng điện.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "vật liệu đốt cháy được"
+      ],
+      "source_answers": [
+        "vật liệu đốt cháy được"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE15-B",
+      "pair_id": "VE15",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Steam_engine",
+      "source_question_id": "571144d1a58dae1900cd6d6e",
+      "question": "Đâu là nguồn nhiệt thông thường để đun sôi nước trong động cơ hơi nước?",
+      "context": "Ở một số trường hợp, nguồn nhiệt là lò phản ứng hạt nhân, năng lượng địa nhiệt, năng lượng mặt trời hay nhiệt thải từ động cơ đốt trong hay quy trình công nghiệp. Trường hợp động cơ hơi nước mô hình hoặc đồ chơi, nguồn nhiệt có thể là bộ phận làm nóng bằng điện.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "vật liệu đốt cháy được"
+      ],
+      "removed_sentences": [
+        "Nhiệt cần thiết để đun sôi nước và cung cấp hơi nước có thể lấy từ nhiều nguồn khác nhau, phổ biến nhất là từ vật liệu đốt cháy được với nguồn cấp khí thích hợp trong không gian khép kín (gọi theo nhiều cách khác nhau làbuồng đốt, lò)."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE16-A",
+      "pair_id": "VE16",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Ctenophora",
+      "source_question_id": "5725bae289a1e219009abd90",
+      "question": "Sứa lược có thể ăn bao nhiêu trong một ngày?",
+      "context": "Hầu như tất cả các loài sứa lược đều là động vật ăn thịt, săn mồi từ ấu trùng và luân trùng nhỏ cho đến loài giáp xác nhỏ đã trưởng thành; trường hợp ngoại lệ là sinh vật con của hai loài, sống như ký sinh trên loài cá thể trưởng thành bị chúng ăn. Trong hoàn cảnh thuận lợi, sứa lược có thể ăn gấp mười lần trọng lượng của chính chúng trong một ngày. Chỉ có 100-150 loài đã được xác nhận và có thể còn 25 loài khác chưa được mô tả và đặt tên đầy đủ. Các ví dụ trong sách giáo khoa là các con sứa lược có tua có thân hình quả trứng và một cặp xúc tu có thể thu vào được với tua (\"xúc tu nhỏ\") được bao phủ bằng tế bào dính, các tế bào dính bắt con mồi. Cơ thể sứa lược có nhiều hình dạng, bao gồm các loại sứa lược dẹp phẳng dưới biển sâu, trong đó hầu hết khi trưởng thành đều thiếu các tấm lược, và các con sứa lược ven biển lại thiếu xúc tu và săn mồi các loài sứa lược khác bằng cách sử dụng những cái miệng khổng lồ chứa các lông mao lớn và cứng đóng cai trò thay thế cho răng. Những biến thể này cho phép các loài khác nhau hình thành nên các quần thể khổng lồ trong cùng một khu vực, vì chúng chuyên bắt các loại mồi khác nhau bằng nhiều phương thức khác nhau giống như loài nhện sử dụng.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "gấp mười lần trọng lượng của chính chúng"
+      ],
+      "source_answers": [
+        "gấp mười lần trọng lượng của chính chúng"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE16-B",
+      "pair_id": "VE16",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Ctenophora",
+      "source_question_id": "5725bae289a1e219009abd90",
+      "question": "Sứa lược có thể ăn bao nhiêu trong một ngày?",
+      "context": "Hầu như tất cả các loài sứa lược đều là động vật ăn thịt, săn mồi từ ấu trùng và luân trùng nhỏ cho đến loài giáp xác nhỏ đã trưởng thành; trường hợp ngoại lệ là sinh vật con của hai loài, sống như ký sinh trên loài cá thể trưởng thành bị chúng ăn. Chỉ có 100-150 loài đã được xác nhận và có thể còn 25 loài khác chưa được mô tả và đặt tên đầy đủ. Các ví dụ trong sách giáo khoa là các con sứa lược có tua có thân hình quả trứng và một cặp xúc tu có thể thu vào được với tua (\"xúc tu nhỏ\") được bao phủ bằng tế bào dính, các tế bào dính bắt con mồi. Cơ thể sứa lược có nhiều hình dạng, bao gồm các loại sứa lược dẹp phẳng dưới biển sâu, trong đó hầu hết khi trưởng thành đều thiếu các tấm lược, và các con sứa lược ven biển lại thiếu xúc tu và săn mồi các loài sứa lược khác bằng cách sử dụng những cái miệng khổng lồ chứa các lông mao lớn và cứng đóng cai trò thay thế cho răng. Những biến thể này cho phép các loài khác nhau hình thành nên các quần thể khổng lồ trong cùng một khu vực, vì chúng chuyên bắt các loại mồi khác nhau bằng nhiều phương thức khác nhau giống như loài nhện sử dụng.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "gấp mười lần trọng lượng của chính chúng"
+      ],
+      "removed_sentences": [
+        "Trong hoàn cảnh thuận lợi, sứa lược có thể ăn gấp mười lần trọng lượng của chính chúng trong một ngày."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE17-A",
+      "pair_id": "VE17",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Fresno,_California",
+      "source_question_id": "5725edfe38643c19005acea2",
+      "question": "Hai nhóm người Mỹ gốc Á sống ở khu vực phía tây Fresno là nhóm nào?",
+      "context": "\"Phía Tây\" Fresno, còn được gọi là \"Tây Nam Fresno\", là một trong những khu phố lâu đời nhất thành phố. Khu phố nằm phía tây nam đường cao tốc số 99 (tách biệt với Trung tâm Fresno), phía tây của đường cao tốc số 41 và phía nam Đại lộ Nielsen (hoặc Đường cao tốc số 180 mới được xây dựng) và mở rộng đến vành đai thành phố đến phía tây và nam. Khu phố này theo truyền thống được coi là trung tâm của cộng đồng người Mỹ gốc Phi của Fresno. Nó rất đa dạng về văn hóa và cũng bao gồm cộng đồng người Mỹ gốc Mexico và người Mỹ gốc Á (chủ yếu là người H'mong hoặc Lào).",
+      "expected_status": "answer",
+      "reference_answers": [
+        "người H'mong hoặc Lào"
+      ],
+      "source_answers": [
+        "người H'mong hoặc Lào"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE17-B",
+      "pair_id": "VE17",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Fresno,_California",
+      "source_question_id": "5725edfe38643c19005acea2",
+      "question": "Hai nhóm người Mỹ gốc Á sống ở khu vực phía tây Fresno là nhóm nào?",
+      "context": "\"Phía Tây\" Fresno, còn được gọi là \"Tây Nam Fresno\", là một trong những khu phố lâu đời nhất thành phố. Khu phố nằm phía tây nam đường cao tốc số 99 (tách biệt với Trung tâm Fresno), phía tây của đường cao tốc số 41 và phía nam Đại lộ Nielsen (hoặc Đường cao tốc số 180 mới được xây dựng) và mở rộng đến vành đai thành phố đến phía tây và nam. Khu phố này theo truyền thống được coi là trung tâm của cộng đồng người Mỹ gốc Phi của Fresno.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "người H'mong hoặc Lào"
+      ],
+      "removed_sentences": [
+        "Nó rất đa dạng về văn hóa và cũng bao gồm cộng đồng người Mỹ gốc Mexico và người Mỹ gốc Á (chủ yếu là người H'mong hoặc Lào)."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE18-A",
+      "pair_id": "VE18",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Economic_inequality",
+      "source_question_id": "572a1046af94a219006aa791",
+      "question": "Điều gì đã trở thành bí quyết cho tăng trưởng kinh tế?",
+      "context": "Nhà kinh tế học Joseph Stiglitz đã trình bày bằng chứng vào năm 2009 rằng cả bất bình đẳng toàn cầu và bất bình đẳng trong các quốc gia đều ngăn chặn sự tăng trưởng bằng cách hạn chế tổng cầu. Nhà kinh tế học Branko Milanovic đã viết vào năm 2001 rằng, \"Quan điểm cho rằng bất bình đẳng thu nhập gây hại cho tăng trưởng - hoặc sự bình đẳng được cải thiện có thể giúp duy trì tăng trưởng - đã trở nên phổ biến hơn trong những năm gần đây... Lý do chính cho sự thay đổi này là tầm quan trọng ngày càng tăng của vốn nhân lực trong sự phát triển. Khi vốn vật chất quan trọng nhất, tiết kiệm và đầu tư là chìa khóa. Điều quan trọng là phải có một số lượng lớn những người giàu có thể tiết kiệm một tỷ lệ thu nhập lớn hơn người nghèo và đầu tư vào vốn vật chất. Nhưng bây giờ vốn nhân lực khan hiếm hơn máy móc, giáo dục rộng khắp đã trở thành bí quyết để tăng trưởng.\"",
+      "expected_status": "answer",
+      "reference_answers": [
+        "giáo dục rộng khắp"
+      ],
+      "source_answers": [
+        "giáo dục rộng khắp"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE18-B",
+      "pair_id": "VE18",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Economic_inequality",
+      "source_question_id": "572a1046af94a219006aa791",
+      "question": "Điều gì đã trở thành bí quyết cho tăng trưởng kinh tế?",
+      "context": "Nhà kinh tế học Joseph Stiglitz đã trình bày bằng chứng vào năm 2009 rằng cả bất bình đẳng toàn cầu và bất bình đẳng trong các quốc gia đều ngăn chặn sự tăng trưởng bằng cách hạn chế tổng cầu. Nhà kinh tế học Branko Milanovic đã viết vào năm 2001 rằng, \"Quan điểm cho rằng bất bình đẳng thu nhập gây hại cho tăng trưởng - hoặc sự bình đẳng được cải thiện có thể giúp duy trì tăng trưởng - đã trở nên phổ biến hơn trong những năm gần đây... Lý do chính cho sự thay đổi này là tầm quan trọng ngày càng tăng của vốn nhân lực trong sự phát triển. Khi vốn vật chất quan trọng nhất, tiết kiệm và đầu tư là chìa khóa. Điều quan trọng là phải có một số lượng lớn những người giàu có thể tiết kiệm một tỷ lệ thu nhập lớn hơn người nghèo và đầu tư vào vốn vật chất.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "giáo dục rộng khắp"
+      ],
+      "removed_sentences": [
+        "Nhưng bây giờ vốn nhân lực khan hiếm hơn máy móc, giáo dục rộng khắp đã trở thành bí quyết để tăng trưởng.\""
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE19-A",
+      "pair_id": "VE19",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Pharmacy",
+      "source_question_id": "5726da89dd62a815002e92b2",
+      "question": "Ai giám sát Kỹ thuật viên Dược ở Anh?",
+      "context": "Một Kỹ thuật viên Dược (KTVD) ở Anh được coi là một chuyên gia chăm sóc sức khỏe và thường không làm việc dưới sự giám sát trực tiếp của dược sĩ (nếu làm việc trong một nhà thuốc bệnh viện) mà thay vào đó được giám sát và quản lý bởi các kỹ thuật viên dược cao cấp khác. Ở Anh, vai trò của một KTVD đã tăng lên và được giao trách nhiệm để quản lý bộ phận dược và các lĩnh vực chuyên môn trong ngành dược nhằm cho phép dược sĩ có thời gian chuyên tâm về lĩnh vực chuyên gia của họ khi các chuyên gia tư vấn về thuốc dành nhiều thời gian làm việc với bệnh nhân và nghiên cứu. Một kỹ thuật viên dược một khi đủ điều kiện phải đăng ký làm một chuyên gia với Hội đồng Dược phẩm (GPhC). GPhC là cơ quan quản lý các chuyên gia chăm sóc sức khỏe dược phẩm và đây là cơ quan kiểm soát hoạt động của dược sĩ và kỹ thuật viên dược.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "các kỹ thuật viên dược cao cấp khác"
+      ],
+      "source_answers": [
+        "các kỹ thuật viên dược cao cấp khác"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE19-B",
+      "pair_id": "VE19",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Pharmacy",
+      "source_question_id": "5726da89dd62a815002e92b2",
+      "question": "Ai giám sát Kỹ thuật viên Dược ở Anh?",
+      "context": "Ở Anh, vai trò của một KTVD đã tăng lên và được giao trách nhiệm để quản lý bộ phận dược và các lĩnh vực chuyên môn trong ngành dược nhằm cho phép dược sĩ có thời gian chuyên tâm về lĩnh vực chuyên gia của họ khi các chuyên gia tư vấn về thuốc dành nhiều thời gian làm việc với bệnh nhân và nghiên cứu. Một kỹ thuật viên dược một khi đủ điều kiện phải đăng ký làm một chuyên gia với Hội đồng Dược phẩm (GPhC). GPhC là cơ quan quản lý các chuyên gia chăm sóc sức khỏe dược phẩm và đây là cơ quan kiểm soát hoạt động của dược sĩ và kỹ thuật viên dược.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "các kỹ thuật viên dược cao cấp khác"
+      ],
+      "removed_sentences": [
+        "Một Kỹ thuật viên Dược (KTVD) ở Anh được coi là một chuyên gia chăm sóc sức khỏe và thường không làm việc dưới sự giám sát trực tiếp của dược sĩ (nếu làm việc trong một nhà thuốc bệnh viện) mà thay vào đó được giám sát và quản lý bởi các kỹ thuật viên dược cao cấp khác."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    },
+    {
+      "case_id": "VE20-A",
+      "pair_id": "VE20",
+      "split": "heldout",
+      "condition": "complete",
+      "source_title": "Rhine",
+      "source_question_id": "572f6a0ba23a5019007fc5eb",
+      "question": "Cái gì chảy giữa Bingen và Bon?",
+      "context": "Giữa Bingen và Bon, Trung Lưu sông Rhine chảy qua Hẻm núi sông Rhine, được hình thành do sự xói mòn. Tốc độ xói mòn ngang bằng với sự trồi lên trong khu vực, do đó, dòng sông vẫn giữ lại cao độ ban đầu trong khi các vùng đất xung quanh lại cao lên. Đèo khá sâu và là phần nối dài đoạn sông nổi tiếng với nhiều lâu đài và vườn nho. Đây là Di sản Thế giới của UNESCO (2002) và được gọi là \"Rhine lãng mạn\", với hơn 40 lâu đài và pháo đài từ thời Trung cổ và nhiều ngôi làng nông thôn cổ kính và đáng yêu.",
+      "expected_status": "answer",
+      "reference_answers": [
+        "Trung Lưu sông Rhine"
+      ],
+      "source_answers": [
+        "Trung Lưu sông Rhine"
+      ],
+      "removed_sentences": [],
+      "review_status": "source_annotation"
+    },
+    {
+      "case_id": "VE20-B",
+      "pair_id": "VE20",
+      "split": "heldout",
+      "condition": "evidence_removed",
+      "source_title": "Rhine",
+      "source_question_id": "572f6a0ba23a5019007fc5eb",
+      "question": "Cái gì chảy giữa Bingen và Bon?",
+      "context": "Tốc độ xói mòn ngang bằng với sự trồi lên trong khu vực, do đó, dòng sông vẫn giữ lại cao độ ban đầu trong khi các vùng đất xung quanh lại cao lên. Đèo khá sâu và là phần nối dài đoạn sông nổi tiếng với nhiều lâu đài và vườn nho. Đây là Di sản Thế giới của UNESCO (2002) và được gọi là \"Rhine lãng mạn\", với hơn 40 lâu đài và pháo đài từ thời Trung cổ và nhiều ngôi làng nông thôn cổ kính và đáng yêu.",
+      "expected_status": "abstain",
+      "reference_answers": [],
+      "source_answers": [
+        "Trung Lưu sông Rhine"
+      ],
+      "removed_sentences": [
+        "Giữa Bingen và Bon, Trung Lưu sông Rhine chảy qua Hẻm núi sông Rhine, được hình thành do sự xói mòn."
+      ],
+      "review_status": "AI_screened_human_review_pending"
+    }
+  ]
+}
