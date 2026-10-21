@@ -3,6 +3,10 @@
 An AI-assisted student research prototype for evidence-grounded Vietnamese technical assistants.
 Project owner: Nguyễn Ngọc Minh. Version 1.0, prepared 21 October 2026.
 
+[Technical report (PDF)](reports/vietevidence-report.pdf) · [Kết luận tiếng Việt](results/KET-LUAN.md) · [All scores](results/summary.csv) · [Raw model outputs](runs/predictions.jsonl) · [Hướng dẫn cho Minh](HUONG-DAN-CHO-MINH.md)
+
+**Completed pilot:** 816 recorded model requests, including 2 invalid/length-limited responses. Stronger support-checking prompts did not consistently improve held-out balanced accuracy; a literal-citation gate helped some settings but left residual unsupported answers. The deliberately narrow technical layouts were also solved by a task-specific rule extractor. These findings motivate broader, independently reviewed data; they do not establish general model superiority.
+
 ## Research question
 
 Under fixed local-model settings, how do support-checking instructions and a literal-citation gate affect answer accuracy, unsupported answers, and unnecessary abstention when Vietnamese technical evidence is missing, belongs to another revision, or contains an injected instruction?
