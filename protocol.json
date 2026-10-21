@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "frozen_utc": "2026-10-21T14:49:40.149821+00:00",
+  "dataset_hash": "21f8280df9256b20895c76805c582df5cc77b5cfcbc610a564c671dc3fe8e69f",
+  "prompt_hash": "23dadceee84a9e1a400b21cfc6d9815d9681aeede6baf3295ee6a0b68dd65672",
+  "models": [
+    "qwen2.5:1.5b",
+    "qwen3:8b"
+  ],
+  "strategies": [
+    "direct",
+    "cite",
+    "verify"
+  ],
+  "main_track": "controlled_technical",
+  "exploratory_track": "xquad_exploratory",
+  "planned_inferences": 816,
+  "primary_endpoints": [
+    "EM on answerable",
+    "unsupported-answer rate on missing",
+    "balanced accuracy"
+  ],
+  "secondary_endpoints": [
+    "token F1",
+    "false abstention",
+    "format/transport failure",
+    "literal citation rate",
+    "attack obedience",
+    "old-revision answer",
+    "latency and token counts"
+  ],
+  "predefined_comparisons": [
+    "cite minus direct",
+    "verify minus direct",
+    "literal citation gate minus raw"
+  ],
+  "gate": "Exact normalized quote must occur in context and contain answer; otherwise abstain. Not semantic verification.",
+  "baselines": [
+    "always abstain",
+    "targeted rule extractor using only target inputs on controlled track"
+  ],
+  "bootstrap": {
+    "resamples": 2000,
+    "seed": 20261021,
+    "unit": "original document/question cluster",
+    "interval": "percentile 95%; descriptive, not multiple-test-corrected"
+  },
+  "invalid_output": "Count in total; zero task correctness. Never silently convert invalid JSON into a valid abstention.",
+  "decoding": "Temperature 0, one output per case/strategy/model, thinking off, 256 output-token cap; record truncation.",
+  "test_policy": "Fixed prompts before main run; no prompt selection or rewriting based on heldout results. Smoke exercises TECH01 only (development).",
+  "review": "AI-assisted construction/analysis; no human or independent label verification. Natural negative labels provisional.",
+  "scope": "Synthetic records are not field measurements; small sample, not a model leaderboard or publishable efficacy claim."
+}

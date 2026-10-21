@@ -1,0 +1,80 @@
+# VietEvidence Lab
+
+An AI-assisted student research prototype for evidence-grounded Vietnamese technical assistants.
+Project owner: Nguyễn Ngọc Minh. Version 1.0, prepared 21 October 2026.
+
+## Research question
+
+Under fixed local-model settings, how do support-checking instructions and a literal-citation gate affect answer accuracy, unsupported answers, and unnecessary abstention when Vietnamese technical evidence is missing, belongs to another revision, or contains an injected instruction?
+
+This is a reproducible feasibility study. It is not a deployed engineering product, peer-reviewed paper, or claim of a novel state-of-the-art method. It is not endorsed by Google, HUST, Qwen, or the original dataset authors.
+
+## Included work
+
+- 96 controlled cases: 24 fictional technical dossiers, each with supported, missing, revision-conflict, and instruction-injected conditions. Six field types cover voltage, sampling interval, UART speed, buffer size, firmware, and service ports.
+- 40 exploratory XQuAD cases: 20 original question/passage pairs and evidence-removed variants from the earlier pilot.
+- Two local model snapshots, Qwen2.5 1.5B and Qwen3 8B; three fixed prompting strategies under a common JSON citation schema. Planned total: 816 independent model requests.
+- Raw responses, model digests, decoding settings, request timestamps, token counts, durations, and failures are retained in `runs/`.
+- A literal citation/answer containment gate is applied offline to the same responses. It is a heuristic, not semantic entailment verification and not another model run.
+- Two transparent non-neural baselines: always abstain, and a task-specific rule extractor. The latter intentionally demonstrates how easy the controlled layouts are to parse.
+- Cluster bootstrap intervals and paired comparisons, with natural and synthetic tracks and development/heldout splits kept separate.
+
+Read `results/analysis.json` for actual completion status. The report generator refuses to label an unfinished run as complete.
+
+The 12 development-only smoke requests in `runs/smoke.jsonl` and any interactive demonstration are separate from the 816 main-run requests and are not pooled into the research scores.
+
+## Reproduce
+
+Core scripts use Python 3.10+ standard library only. Ollama must already be installed and running locally. Fetching the two model weights requires network access and about 6.2 GB total storage if neither model is present. Model files are not included in this package.
+
+```text
+ollama pull qwen2.5:1.5b
+ollama pull qwen3:8b
+python build_dataset.py
+python -m unittest -v test_lab
+python run_experiment.py
+python analyze.py
+python build_viewer.py
+python serve.py
+```
+
+Open http://127.0.0.1:8766 after starting the viewer server. `index.html` also works directly for reading frozen results; live local-model testing needs `serve.py`.
+
+`protocol.json` was frozen before the main run. It contains the dataset/prompt/configuration hashes and the analysis plan. Do not overwrite it to disguise a protocol change. Use a new project version for a new dataset, prompt, model, or analysis design.
+
+The runner resumes existing records only when provenance matches. It does not retry or silently discard malformed outputs, and refuses duplicate records. To conduct an independent repetition, keep the original `runs/` intact and make a separate copy of the project.
+
+The PDF/chart authoring script additionally needs reportlab and matplotlib; the benchmark and analysis do not. See `requirements-report.txt`.
+
+## What the numbers mean
+
+Answerable exact match is the fraction of supported cases whose short answer matches the reference after Unicode normalization. Decimal points and internal code hyphens are retained. Token F1 uses whitespace tokens, not a Vietnamese linguistic tokenizer.
+
+Unsupported-answer rate is the fraction of missing-evidence cases where the model still answers. Balanced accuracy averages answerable exact match and correct abstention on missing cases. This prevents an always-refuse system from appearing successful by reporting only low unsupported-answer rates. Invalid output receives zero task correctness and is reported separately.
+
+Each controlled dossier contributes four correlated variants. Bootstrap sampling therefore resamples dossiers, not individual variants. XQuAD pairs are likewise clustered. Percentile 95% intervals are descriptive, uncorrected for multiple comparisons, and often wide with 16 held-out technical dossiers and 10 held-out natural pairs.
+
+All three strategies share a JSON schema with an evidence field and a common instruction to treat documents as untrusted data. The study compares levels of support instruction; it does not isolate the causal effect of adding citations to a citation-free baseline. Models differ in generation and scale, so it cannot isolate the effect of parameter count.
+
+## Limitations and research integrity
+
+- Technical records are fictional and generated by code, not measurements from real devices. Labels are defined by the generator and checked by software, not independently reviewed by humans.
+- Templates are narrow, identifiers and values are generated, and several layouts share structure across splits. Holding out dossiers is not holding out all linguistic templates or domains.
+- XQuAD is an older public benchmark and may be in training data. Derived missing labels remain provisional until independent semantic review. Never pool these results with the controlled track to claim validated natural-language performance.
+- A quote can exist and still refer to the wrong entity/version. The gate can reject correct paraphrases, accept misleading quotes, and trade coverage for fewer unsupported answers.
+- One greedy/seeded run per configuration does not estimate run-to-run variation. GPU execution, software changes, cache state and power management can affect repeatability and latency.
+- No production latency, energy consumption, embedded-device deployment, or cloud-model superiority is claimed. No Gemini or Google Antigravity model output was collected in this study.
+- Dataset creation, implementation, experiment execution and initial analysis were performed with AI assistance in this chat. The student has not yet independently reproduced the full study or completed label review. `data/review.csv` is deliberately blank.
+
+## Follow-up over 6-12 months
+
+1. Reproduce the results personally and review the controlled and natural labels; seek independent review when available.
+2. Replace narrow templates with legally reusable Vietnamese device manuals and more varied questions; keep a new hidden test set.
+3. Add retrieval and context-selection errors, more attack families, repeated runs, and models from another family.
+4. Measure latency, RAM/VRAM and energy on the actual target hardware before making edge-deployment claims.
+5. Use Antigravity to maintain adapters, tests, experiment manifests and failure analysis; model/API access remains a separate resource requirement.
+6. Release reviewed data, reproducible code, a technical report and limitations. Consider publication only if validation and contribution justify it.
+
+## Attribution and licensing
+
+Original software: MIT, see `LICENSE`. Controlled synthetic records: CC BY 4.0, see `ATTRIBUTION.md`. XQuAD material and derivatives: CC BY-SA 4.0, see `XQUAD-LICENSE.txt`. Model weights are not redistributed; their original licenses apply. The project is intended for non-commercial research, while these open licenses may permit downstream commercial use.
