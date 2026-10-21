@@ -1,0 +1,8 @@
+{
+  "recordedLocal": "2026-10-21",
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+  "logicalThreads": 24,
+  "physicalRAMBytes": 16886128640,
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB, 617.42",
+  "notes": "Laptop hardware; power and thermal state not controlled; no energy measurement."
+}
